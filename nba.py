@@ -10,9 +10,7 @@ from nba_api.stats.endpoints import leaguestandingsv3
 from pandasql import sqldf
 import json
 from gtts import gTTS
-import openai
-import json
-from PIL import Image
+from PIL import Image, ImageFilter
 import pandas as pd
 import altair as alt
 import matplotlib as mpl
@@ -30,8 +28,6 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM, Dropout
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
-from barfi import st_barfi, Block, barfi_schemas
-import streamlit.components.v1 as components
 
 #Common objects for every function used
 nba_teams = teams.get_teams()
@@ -40,17 +36,43 @@ nba_teams = teams.get_teams()
 def introduction():
     st.markdown("<h1 style='text-align: center; color: lightblue;'>NBA Full Service App</h1>", unsafe_allow_html=True)
     st.caption("<h1 style='text-align: center;'>By Tobi Bui</h1>",unsafe_allow_html=True)
-    st.markdown("<h1 style='text-align: left; color: red;'>Introduction about the project</h1>", unsafe_allow_html=True)
-    st.subheader('1: Project Purposes')
-    st.markdown("""The objective of my project is to understand the structure of Tinder and implement decision tree algorithm to do the best matching.
-                I developed separated table filter based on the user selection to do the matching activities. The filter has a total of 10 filter layers
-                in general. Additionally, I implemented the OpenAI's engine GPT-3 to support my response in convincing people to use the app (a mini chatbot kind alike) as well as
-                developing a Computer Vision Algorithm which detects a person's face and evaluate gender, age and beauty score based on the Golden Face Ratio. 
+    st.markdown("<h1 style='text-align: left; color: red;'>Introduction about the Project</h1>", unsafe_allow_html=True)
+    st.markdown("""The objective of my project is to understand how the NBA website works and do it in a more technical way but not focus on the aesthetic look of the website.
+                I want to discover how scouters as well as coaches evaluate a player's quality to make the best tactics and training. Additionally, I want to help them have the best views of the players performances to make better
+                decision. It's also built so that they can know what to do in the future about the player as well as teams status to improve in the future and reduce the weaknesses they have currently. Finally I want to learn new data 
+                science tools and apply machine learning as well as data analytics to improve my coding skills.
 """)
-    st.subheader('2: How the system works')
-
+    st.markdown("<h1 style='text-align: left; color: red;'>Website System Flows</h1>", unsafe_allow_html=True)
+    st.subheader("Introduction")
+    st.write("This is the front page of the website presenting the purpose, website flows and mechanism usages")
+    
+    st.subheader("NBA Player Career Analysis")
+    st.caption("Inputs")
+    st.write("Inputs: There are 2 inputs: first name, last name")
+    st.caption("Outputs")
+    st.write("Output: There're 2 main parts: data analysis and machine learning algorithms. For the data analysis, take a look at yourself and see what happens")
+    st.write("For the Machine Learning sections, I use 2 algorithms: Autoregressive and RNN.")
+    st.caption("Machine Learning")
+    st.write("For the Autoregressive, I build it from scratch. In statistics, econometrics and signal processing, an autoregressive (AR) model is a representation of a type of random process; as such, it is used to describe certain time-varying processes in nature, economics, behavior, etc. The autoregressive model specifies that the output variable depends linearly on its own previous values and on a stochastic term (an imperfectly predictable term); thus the model is in the form of a stochastic difference equation (or recurrence relation which should not be confused with differential equation). Together with the moving-average (MA) model, it is a special case and key component of the more general autoregressive–moving-average (ARMA) and autoregressive integrated moving average (ARIMA) models of time series, which have a more complicated stochastic structure; it is also a special case of the vector autoregressive model (VAR), which consists of a system of more than one interlocking stochastic difference equation in more than one evolving random variable. Contrary to the moving-average (MA) model, the autoregressive model is not always stationary as it may contain a unit root. The main purpose of this algorithm is to predict the chosen stats in future seasons as long as you wanted it to be. But the recommendation is 10 for accuracy")
+    st.write("For the RNN, I import it using scikit-learn library from Python. A recurrent neural network (RNN) is a class of artificial neural networks where connections between nodes can create a cycle, allowing output from some nodes to affect subsequent input to the same nodes. This allows it to exhibit temporal dynamic behavior. Derived from feedforward neural networks, RNNs can use their internal state (memory) to process variable length sequences of inputs.This makes them applicable to tasks such as unsegmented, connected handwriting recognition or speech recognition. Recurrent neural networks are theoretically Turing complete and can run arbitrary programs to process arbitrary sequences of inputs. The term recurrent neural network is used to refer to the class of networks with an infinite impulse response, whereas convolutional neural network refers to the class of finite impulse response. Both classes of networks exhibit temporal dynamic behavior.[8] A finite impulse recurrent network is a directed acyclic graph that can be unrolled and replaced with a strictly feedforward neural network, while an infinite impulse recurrent network is a directed cyclic graph that can not be unrolled. The main purpose of this algorithm is to predict the chosen stats while comparing to current active players to see how he's performing in the future so it might take a long time to run. Additionally, this can only predict the next season")
+    
+    st.subheader("NBA Team Seasonal Analysis")
+    st.caption("Inputs")
+    st.write("Inputs: There are 2 inputs: team name, the team's AI drawn image filter")
+    st.caption("Outputs")
+    st.write("Output: There're 2 main parts: team seasonal and team monthly data analysis. These are just basic analytic based on the up to date API that I crawled from the NBA API along with the image of that team designed in any filters you like.")
+    
+    st.subheader("NBA Podcast")
+    st.caption("Inputs")
+    st.write("Inputs: There are 2 inputs: team name, opposite team name")
+    st.caption("Outputs")
+    st.write("Output: There're 2 main parts: Matchup History Report and machine learning algorithms. For the Matchup History Report, take a look at yourself and see what happens")
+    st.write("For the Machine Learning, I use the Random Forest model. This time, I implement the decision trees by myself and use the most relevant data columns to use as a affecting variable for the possible output of the playoff prediction if they ever face. Random forest is a commonly-used machine learning algorithm trademarked by Leo Breiman and Adele Cutler, which combines the output of multiple decision trees to reach a single result. Its ease of use and flexibility have fueled its adoption, as it handles both classification and regression problems.")
+    
 #NBA Player Career Analysis
 def main_page():
+    st.markdown("<h1 style='text-align: left; color: red;'>Data Analysis</h1>", unsafe_allow_html=True)
+    
     # Creates a node for each player. It is important to note that players. get_player () does not work in this case
     first_name = st.text_input('First name')
     last_name = st.text_input('Last name')
@@ -304,7 +326,7 @@ def main_page():
                 st.pyplot(fig)
         
         # Machine Learning to predict player's performance in the future
-        st.markdown("# Machine Learning ")
+        st.markdown("<h1 style='text-align: left; color: red;'>Machine Learning</h1>", unsafe_allow_html=True)
         
         # Autoregression model
         st.subheader("Autoregression Model to predict every attribute of your selected player")
@@ -439,10 +461,43 @@ def main_page():
 # NBA Team Seasonal Analysis
 def page2():
     # Data Analysis of the team stats
-    st.markdown("# Matching Recommendation ")
+    st.markdown("<h1 style='text-align: left; color: red;'>Data Analysis</h1>", unsafe_allow_html=True)
     
     # Choose the team name
     team_name = st.text_input('Team Name')
+    
+    # Declare NBA Team AI drawn Images
+    boston_image = Image.open(r"C:\Users\Admin\nba\Boston Celtics.jpg")
+    buck_image = Image.open(r"C:\Users\Admin\nba\Bucks.jpg")
+    hornet_image = Image.open(r"C:\Users\Admin\nba\Charlotte Hornets.jpg")
+    bulls_image = Image.open(r"C:\Users\Admin\nba\Chicago Bulls.jpg")
+    cav_image = Image.open(r"C:\Users\Admin\nba\Cleveland Cavaliers.jpg")
+    dallas_image = Image.open(r"C:\Users\Admin\nba\Dallas Mavericks.jpg")
+    nugget_image = Image.open(r"C:\Users\Admin\nba\Denver Nuggets.jpg")
+    piston_image = Image.open(r"C:\Users\Admin\nba\Detroit Pistons.jpg")
+    warrior_image = Image.open(r"C:\Users\Admin\nba\Golden State Warriors.jpg")
+    rocket_image = Image.open(r"C:\Users\Admin\nba\Houston Rockets.jpg")
+    pacer_image = Image.open(r"C:\Users\Admin\nba\Indiana Pacers.jpg")
+    kings_image = Image.open(r"C:\Users\Admin\nba\Kings.jpg")
+    knicks_image = Image.open(r"C:\Users\Admin\nba\Knicks.jpg")
+    clipper_image = Image.open(r"C:\Users\Admin\nba\LA Clippers.jpg")
+    laker_image = Image.open(r"C:\Users\Admin\nba\Lakers.jpg")
+    memphis_image = Image.open(r"C:\Users\Admin\nba\Memphis.jpg")
+    heat_image = Image.open(r"C:\Users\Admin\nba\Miami Heat.jpg")
+    nets_image = Image.open(r"C:\Users\Admin\nba\Nets.jpg")
+    pelicans_image = Image.open(r"C:\Users\Admin\nba\New Orlean Pelicans.jpg")
+    okc_image = Image.open(r"C:\Users\Admin\nba\OKC.jpg")
+    magic_image = Image.open(r"C:\Users\Admin\nba\Orlando Magic.jpg")
+    suns_image = Image.open(r"C:\Users\Admin\nba\Phoenix Suns.jpg")
+    portland_image = Image.open(r"C:\Users\Admin\nba\Portland.jpg")
+    sixer_image = Image.open(r"C:\Users\Admin\nba\Sixers.jpg")
+    spur_image = Image.open(r"C:\Users\Admin\nba\Spurs.jpg")
+    timberwolves_image = Image.open(r"C:\Users\Admin\nba\Timberwolves.jpg")
+    raptor_image = Image.open(r"C:\Users\Admin\nba\Toronto Raptors.jpg")
+    utah_image = Image.open(r"C:\Users\Admin\nba\Utah Jazz.jpg")
+    wizard_image = Image.open(r"C:\Users\Admin\nba\Washington Wizards.jpg")
+    hawks_image = Image.open(r"C:\Users\Admin\nba\hawks.jpg")
+    
     
     # After the user put the team name, begin collecting the team id, full name, nickname, city, state and year founded
     if team_name:
@@ -643,24 +698,101 @@ def page2():
             game_each_season = games[games.SEASON_ID.str[-4:] == str(year_pick)]
             indicator = 1
             team_analysis(game_each_season, indicator)
+    
+        if team_full_name[0] == "Boston Celtics":
+            image = boston_image
+        elif team_full_name[0] == "Milwaukee Bucks":
+            image = buck_image
+        elif team_full_name[0] == "Charlotte Hornets":
+            image = hornet_image
+        elif team_full_name[0] == "Chicago Bulls":
+            image = bulls_image
+        elif team_full_name[0] == "Cleveland Cavaliers":
+            image = cav_image
+        elif team_full_name[0] == "Dallas Mavericks":
+            image = dallas_image
+        elif team_full_name[0] == "Denver Nuggets":
+            image = nugget_image
+        elif team_full_name[0] == "Detroit Pistons":
+            image = piston_image
+        elif team_full_name[0] == "Golden State Warriors":
+            image = warrior_image
+        elif team_full_name[0] == "Atlanta Hawks":
+            image = hawks_image
+        elif team_full_name[0] == "Houston Rockets":
+            image = rocket_image
+        elif team_full_name[0] == "Indiana Pacers":
+            image = pacer_image
+        elif team_full_name[0] == "Sacramento Kings":
+            image = kings_image
+        elif team_full_name[0] == "New York Knicks":
+            image = knicks_image
+        elif team_full_name[0] == "Los Angeles Clipper":
+
+            image = clipper_image
+        elif team_full_name[0] == "Los Angeles Lakers":
+            image = laker_image
+        elif team_full_name[0] == "Memphis Grizzlies":
+            image = memphis_image
+        elif team_full_name[0] == "Miami Heat":
+            image = heat_image
+        elif team_full_name[0] == "Brooklyn Nets":
+            image = nets_image
+        elif team_full_name[0] == "New Orlean Pelicans":
+            image = pelicans_image
+        elif team_full_name[0] == "Oklahoma City Thunder":
+            image = okc_image
+        elif team_full_name[0] == "Orlando Magic":
+            image = magic_image
+        elif team_full_name[0] == "Phoenix Suns":
+            image = suns_image
+        elif team_full_name[0] == "Portland Trail Blazers":
+            image = portland_image
+        elif team_full_name[0] == "Philadelphia 76ers":
+            image = sixer_image
+        elif team_full_name[0] == "San Antonio Spurs":
+            image = spur_image
+        elif team_full_name[0] == "Minnesota Timberwolves":
+            image = timberwolves_image
+        elif team_full_name[0] == "Toronto Raptors":
+            image = raptor_image
+        elif team_full_name[0] == "Utah Jazz":
+            image = utah_image
+        elif team_full_name[0] == "Washington Wizards":
+            image = wizard_image
         
-        st.write(f"Here's the AI generated image of your favorite team: {team_full_name[0]}")
+        filters=st.selectbox("Choose your filter",options=["None","Blur","Contour","Emboss","Find Edges"])
+        if filters=="None":
+            pass
+        elif filters=="Blur":
+            image=image.filter(ImageFilter.BLUR)
+        elif filters=="Contour":
+            image=image.filter(ImageFilter.CONTOUR)
+        elif filters=="Emboss":
+            image=image.filter(ImageFilter.EMBOSS)
+        elif filters=="Find Edges":
+            image=image.filter(ImageFilter.FIND_EDGES)
         
+        st.write(f"Here's the AI generated image of your favorite team with chosen filters: {team_full_name[0]}")
+        st.image(image)
+            
 # NBA Podcast and Playoff Win Prediction 
 def page3():
+    st.markdown("<h1 style='text-align: left; color: red;'>Gamelog</h1>", unsafe_allow_html=True)
+    
     # Input team name
     team_name = st.text_input('Team Name')
     
     # Input Opposite team name
     opposite_team_name = st.text_input('Opposing Team Name')
     
-    # Choose the date you want to see the stats
-    match_date = st.date_input(
-                    "Your Match Date",
-                    datetime.date(2019, 7, 6))
-    
     # After the user finish inputting the team names
-    if team_name:
+    if team_name and opposite_team_name:
+        # Choose the date you want to see the stats
+        match_date = st.date_input(
+                        "Your Match Date",
+                        datetime.date(2019, 7, 6))
+    
         # Team search Information including team_id, nickname and full name function
         def search_team_info(name):
             # Declare team information lists
@@ -686,288 +818,306 @@ def page3():
         
         # The second DataFrame of those returned is what we want for oppsite team
         games = games[games.MATCHUP.str.contains(search_team_info(name=opposite_team_name)[1][0])]
+        
+        # Matchup History
+        st.subheader("Matchup History:")
         st.write(games)
         
         # Print the stats report for selected date
         games1 = games.loc[(games['GAME_DATE'] == str(match_date))]
-        st.write(games1)
         
-        # Get the selected date game ID
-        games_id = games1.GAME_ID
+        #Check if the user enters the correct date
+        if games1.empty:
+            st.warning("You need to choose the correct date which can be found in the Matchup History Dataframe I provided below")
+        else:
+            st.subheader("The matchup result you looked for:")
+            st.write(games1)
         
-        # Get the selected date game dataframe
-        pbp = playbyplayv2.PlayByPlayV2(games_id)
-        pbp = pbp.get_data_frames()[0]
-        
-        # Copy the result to another fucntion
-        df = pbp.copy()
-        
-        # Replace NA value with empty space
-        pbp = pbp.fillna('')
-        
-        # Format for the Score column 
-        pbp['SCORE'] = pbp.apply(lambda x: 'The score is now ' + str(x['SCORE'] +'.') if x['SCORE'] != "" else "", axis=1)
-        
-        # Create a function to get the Score report based on the dataframe and create a new Score column with detailed description to put in the dataframe
-        def get_score_string(row):
-            # Declare new variable list  to gather necessary information such as score, scoremargin
-            score = row['SCORE']
-            score_margin = row['SCOREMARGIN']
-            team_abbreviation = ''
+            # Get the selected date game ID
+            games_id = games1.GAME_ID
             
-            # When the score is not empty
-            if score != ' ':
-                # Score status: TIE
-                if isinstance(score_margin, str) and score_margin == 'TIE':
-                    team_abbreviation = 'The score is tie'
-                
-                # Score status: LEADS for the home team
-                elif score_margin != '' and int(score_margin) > 0:
-                    team_abbreviation = search_team_info(name=team_name)[2][0] + " " + "leads "
-                
-                # Score status: LEADS for the opposite team
-                elif score_margin != '' and int(score_margin) < 0:
-                    team_abbreviation = search_team_info(name=opposite_team_name)[2][0] + " " + "leads "
-                
-                # Return the result of scores
-                return score + ' ' + team_abbreviation
-
-            # When the score is empty
-            else:
-                return ''
+            # Get the selected date game dataframe
+            pbp = playbyplayv2.PlayByPlayV2(games_id)
+            pbp = pbp.get_data_frames()[0]
             
-        # Get the lattest score report
-        pbp['SCORE'] = pbp.apply(get_score_string, axis=1)
-        
-        # Update the final result of the game in the last column
-        last_row = pbp.iloc[-1]
-        last_row_score = last_row['SCORE']
-        if 'leads' in last_row_score:
-            last_row_score = last_row_score.replace('leads', 'wins')
-        pbp.at[pbp.index[-1], 'SCORE'] = last_row_score
-
-        pbp = pbp.assign(ColumnA = pbp.HOMEDESCRIPTION.astype(str) + \
-            pbp.NEUTRALDESCRIPTION.astype(str) + pbp.VISITORDESCRIPTION.astype(str) \
-            + pbp.SCORE.astype(str) + '. ')
-        
-        # Extract the comments from the original dataframe
-        df = pbp.ColumnA
-        sum = ''
-        for index, value in df.items():
-            sum += value
-        
-        # Create a autonomous voice recap for listening when you are too lazy to read the report: This can take about 5 mins to finish
-        voice_recap = st.checkbox("Hear recap of this match")
-        
-        # Warning the time to process when the user want to hear the report
-        st.warning('This might take about a minute to load because the recap file is large')
-        
-        # If they choose to hear, print the recording
-        if voice_recap:
-            sound_file = BytesIO()
-            tts = gTTS(sum, lang='en')
-            tts.write_to_fp(sound_file)
-            st.audio(sound_file)
-        
-        # Get the data for the game of 2 teams
-        df = playbyplayv2.PlayByPlayV2(games_id).get_data_frames()[0]
-
-        #the following expression is specific to EventMsgType 1
-        p = re.compile('(\s{2}|\' )([\w+ ]*)')
-
-        # Get the PlayByPlay data from the Pacers game_id
-        plays = playbyplayv2.PlayByPlayV2(games_id).get_normalized_dict()['PlayByPlay']
-
-        #declare a few variables
-        description = ''
-        event_msg_action_types = {}
-        event_msg_action_types1 = {}
-        
-        #loop over the play by play data
-        for play in plays:
-            # Report successful stats for the home team
-            if play['EVENTMSGTYPE'] == 1:
-                description = play['HOMEDESCRIPTION'] if play['HOMEDESCRIPTION'] is not None else play['VISITORDESCRIPTION']
-                if description is not None:
-                    try:
-                        #do a bit of searching(regex) and a little character magic: underscores and upper case
-                        event_msg_action = re.sub(' ', '_', p.search(description).groups()[1].rstrip()).upper()
-                    except AttributeError:
-                        event_msg_action = 'UNKNOWN'
-                    #Add it to our dictionary
-                    event_msg_action_types[event_msg_action] = play['EVENTMSGACTIONTYPE']
+            # Copy the result to another fucntion
+            df = pbp.copy()
             
-            # Report failed stats for the home team
-            if play['EVENTMSGTYPE'] == 2:
-                match = []
-                if play['HOMEDESCRIPTION'] is not None: 
-                    match = p.findall(play['HOMEDESCRIPTION'])
+            # Replace NA value with empty space
+            pbp = pbp.fillna('')
+            
+            # Format for the Score column 
+            pbp['SCORE'] = pbp.apply(lambda x: 'The score is now ' + str(x['SCORE'] +'.') if x['SCORE'] != "" else "", axis=1)
+            
+            # Create a function to get the Score report based on the dataframe and create a new Score column with detailed description to put in the dataframe
+            def get_score_string(row):
+                # Declare new variable list  to gather necessary information such as score, scoremargin
+                score = row['SCORE']
+                score_margin = row['SCOREMARGIN']
+                team_abbreviation = ''
+                
+                # When the score is not empty
+                if score != ' ':
+                    # Score status: TIE
+                    if isinstance(score_margin, str) and score_margin == 'TIE':
+                        team_abbreviation = 'The score is tie'
                     
-                if not match and play['VISITORDESCRIPTION'] is not None:
-                    match = p.findall(play['VISITORDESCRIPTION'])
-                    if len(match) & (play['HOMEDESCRIPTION'] is not None):
-                        block = play['HOMEDESCRIPTION']
-                
-                if match:
-                    event_msg_action = re.sub(' ', '_', match[0][1]).upper()
-                    event_msg_action_types1[event_msg_action] = play['EVENTMSGACTIONTYPE']
-                
-        event_msg_action_types1 = sorted(event_msg_action_types1.items(), key=operator.itemgetter(0))
-        
-        #sort it all
-        event_msg_action_types = sorted(event_msg_action_types.items(), key=operator.itemgetter(0))
-        
-        # Spilt the headers into 2 sides
-        left1, right1 = st.columns(2)
-        left, right = st.columns(2)
-        
-        with left1:
-            st.header("Success Field Goal")
-        
-        with right1:
-            st.header("Missed Field Goal")
-            
-        # Output a class that we could plug into our code base: succesful home team stats
-        for action in event_msg_action_types:
-            with left:
-                st.write(f'\t{action[0]} = {action[1]}')
-        
-        # Output a class that we could plug into our code base: failed home team stats
-        for action in event_msg_action_types1:
-            with right:
-                st.write(f'\t{action[0]} = {action[1]}')
-        
-        # Add the Block stats to the right side
-        with right:
-            st.write(block)
-        
-        # Seperate the report and machine learning section
-        st.write("---")
-        
-        # Random Forest NBA Playoff Prediction
-        st.header("Machine learning")
-        
-        #Random Forest Element
-        overall_team_scoring = 0
-        win_history = 0
-        better_rank = 0
-        regular_season_win = 0
-        regular_season_win_percentage = 0
-        road_play = 0
-        home_play = 0
+                    # Score status: LEADS for the home team
+                    elif score_margin != '' and int(score_margin) > 0:
+                        team_abbreviation = search_team_info(name=team_name)[2][0] + " " + "leads "
+                    
+                    # Score status: LEADS for the opposite team
+                    elif score_margin != '' and int(score_margin) < 0:
+                        team_abbreviation = search_team_info(name=opposite_team_name)[2][0] + " " + "leads "
+                    
+                    # Return the result of scores
+                    return score + ' ' + team_abbreviation
 
-        # Collect home team player stats and sorted it to most 15 scored players contributed to the game
-        team_player_stats = leagueplayerondetails.LeaguePlayerOnDetails(team_id=search_team_info(name=team_name)[0][0])
-        team_player_stats = team_player_stats.get_data_frames()[0]
-        team_player_stats = sqldf("select * from team_player_stats order by PTS DESC limit 15")
-        
-        # Collect opposite team player stats and sorted it to most 15 scored players contributed to the game
-        opposing_team_player_stats = leagueplayerondetails.LeaguePlayerOnDetails(team_id=search_team_info(name=opposite_team_name)[0][0])
-        opposing_team_player_stats = opposing_team_player_stats.get_data_frames()[0]
-        opposing_team_player_stats = sqldf("select * from opposing_team_player_stats order by PTS DESC limit 15")
-        
-        # Print out their results
-        st.write(team_player_stats)
-        st.write(opposing_team_player_stats)
-        
-        # Print the points difference in dataframe
-        comparing_player_stats = sqldf("WITH t1_row_numbers AS (SELECT ROW_NUMBER() OVER (ORDER BY TEAM_ID) as row_num, team_id, PTS FROM team_player_stats ), t2_row_numbers AS (SELECT ROW_NUMBER() OVER (ORDER BY TEAM_ID) as row_num, team_id, PTS FROM opposing_team_player_stats) SELECT t1_row_numbers.row_num, t1_row_numbers.PTS - t2_row_numbers.PTS as PTS_difference, CASE WHEN t1_row_numbers.PTS - t2_row_numbers.PTS > 0 THEN 1 ELSE 0 END as status FROM t1_row_numbers INNER JOIN t2_row_numbers ON t1_row_numbers.row_num = t2_row_numbers.row_num")
-        st.write(comparing_player_stats)
-        
-        # Determine whose team has better team player scores in general
-        overall_stats_result = comparing_player_stats['status'].value_counts()[1] - comparing_player_stats['status'].value_counts()[0]
-        if overall_stats_result > 0:
-            overall_team_scoring = 1
-        elif overall_stats_result == 0 :
+                # When the score is empty
+                else:
+                    return ''
+                
+            # Get the lattest score report
+            pbp['SCORE'] = pbp.apply(get_score_string, axis=1)
+            
+            # Update the final result of the game in the last column
+            last_row = pbp.iloc[-1]
+            last_row_score = last_row['SCORE']
+            if 'leads' in last_row_score:
+                last_row_score = last_row_score.replace('leads', 'wins')
+            pbp.at[pbp.index[-1], 'SCORE'] = last_row_score
+
+            pbp = pbp.assign(ColumnA = pbp.HOMEDESCRIPTION.astype(str) + \
+                pbp.NEUTRALDESCRIPTION.astype(str) + pbp.VISITORDESCRIPTION.astype(str) \
+                + pbp.SCORE.astype(str) + '. ')
+            
+            # Extract the comments from the original dataframe
+            df = pbp.ColumnA
+            sum = ''
+            for index, value in df.items():
+                sum += value
+            
+            # Create a autonomous voice recap for listening when you are too lazy to read the report: This can take about 5 mins to finish
+            voice_recap = st.checkbox("Hear recap of this match")
+            
+            # Warning the time to process when the user want to hear the report
+            st.warning('This might take about a minute to load because the recap file is large')
+            
+            # If they choose to hear, print the recording
+            if voice_recap:
+                sound_file = BytesIO()
+                tts = gTTS(sum, lang='en')
+                tts.write_to_fp(sound_file)
+                st.audio(sound_file)
+            
+            # Get the data for the game of 2 teams
+            df = playbyplayv2.PlayByPlayV2(games_id).get_data_frames()[0]
+
+            #the following expression is specific to EventMsgType 1
+            p = re.compile('(\s{2}|\' )([\w+ ]*)')
+
+            # Get the PlayByPlay data from the Pacers game_id
+            plays = playbyplayv2.PlayByPlayV2(games_id).get_normalized_dict()['PlayByPlay']
+
+            #declare a few variables
+            description = ''
+            event_msg_action_types = {}
+            event_msg_action_types1 = {}
+            
+            #loop over the play by play data
+            for play in plays:
+                # Report successful stats for the home team
+                if play['EVENTMSGTYPE'] == 1:
+                    description = play['HOMEDESCRIPTION'] if play['HOMEDESCRIPTION'] is not None else play['VISITORDESCRIPTION']
+                    if description is not None:
+                        try:
+                            #do a bit of searching(regex) and a little character magic: underscores and upper case
+                            event_msg_action = re.sub(' ', '_', p.search(description).groups()[1].rstrip()).upper()
+                        except AttributeError:
+                            event_msg_action = 'UNKNOWN'
+                        #Add it to our dictionary
+                        event_msg_action_types[event_msg_action] = play['EVENTMSGACTIONTYPE']
+                
+                # Report failed stats for the home team
+                if play['EVENTMSGTYPE'] == 2:
+                    match = []
+                    if play['HOMEDESCRIPTION'] is not None: 
+                        match = p.findall(play['HOMEDESCRIPTION'])
+                        
+                    if not match and play['VISITORDESCRIPTION'] is not None:
+                        match = p.findall(play['VISITORDESCRIPTION'])
+                        if len(match) & (play['HOMEDESCRIPTION'] is not None):
+                            block = play['HOMEDESCRIPTION']
+                    
+                    if match:
+                        event_msg_action = re.sub(' ', '_', match[0][1]).upper()
+                        event_msg_action_types1[event_msg_action] = play['EVENTMSGACTIONTYPE']
+                    
+            event_msg_action_types1 = sorted(event_msg_action_types1.items(), key=operator.itemgetter(0))
+            
+            #sort it all
+            event_msg_action_types = sorted(event_msg_action_types.items(), key=operator.itemgetter(0))
+            
+            # Spilt the headers into 2 sides
+            left1, right1 = st.columns(2)
+            left, right = st.columns(2)
+            
+            with left1:
+                st.header("Success Field Goal")
+            
+            with right1:
+                st.header("Missed Field Goal")
+                
+            # Output a class that we could plug into our code base: succesful home team stats
+            for action in event_msg_action_types:
+                with left:
+                    st.write(f'\t{action[0]} = {action[1]}')
+            
+            # Output a class that we could plug into our code base: failed home team stats
+            for action in event_msg_action_types1:
+                with right:
+                    st.write(f'\t{action[0]} = {action[1]}')
+            
+            # Add the Block stats to the right side
+            with right:
+                st.write(block)
+            
+            # Seperate the report and machine learning section
+            st.write("---")
+            
+            # Random Forest NBA Playoff Prediction
+            st.markdown("<h1 style='text-align: left; color: red;'>Machine Learning</h1>", unsafe_allow_html=True)
+            
+            #Random Forest Element
             overall_team_scoring = 0
-        else:
-            overall_team_scoring = -1
-        
-        # Determine whose team has more wins in the entire history they faced each other
-        overall_win_result = games['WL'].value_counts()['W'] - games['WL'].value_counts()['L']
-        if overall_win_result > 0:
-            win_history = 1
-        elif overall_win_result == 0 :
             win_history = 0
-        else:
-            win_history = -1
-        
-        # Extract the latest season standings and put it in dataframe
-        league_standing = leaguestandingsv3.LeagueStandingsV3(season_type = 'Regular Season', season_nullable = "2022-2023")
-        league_standing = league_standing.get_data_frames()[0]
-        
-        # Extract the necessary information such as TeamName, PlayoffRank, WINS, WinPCT, Last10Road, Last10Home from the dataframe for 2 teams 
-        team_league_standing = sqldf(f"select TeamName, PlayoffRank, WINS, WinPCT, Last10Road, Last10Home from league_standing where TeamID = {search_team_info(name=team_name)[0][0]}")
-        opposing_team_league_standing = sqldf(f"select TeamName, PlayoffRank, WINS, WinPCT, Last10Road, Last10Home from league_standing where TeamID = {search_team_info(name=opposite_team_name)[0][0]}")
-        
-        # Print the result
-        st.write(team_league_standing)
-        st.write(opposing_team_league_standing)
-        
-        # Extract information from each column and put it in list data structure for home team
-        team_rank = team_league_standing.loc[:,"PlayoffRank"].tolist()
-        team_win = team_league_standing.loc[:,"WINS"].tolist()
-        team_win_percentage = team_league_standing.loc[:,"WinPCT"].tolist()
-        team_road = team_league_standing.loc[:,"Last10Road"].tolist()
-        team_home = team_league_standing.loc[:,"Last10Home"].tolist()
-        
-        # Extract information from each column and put it in list data structure for opposite team
-        opposing_team_rank = opposing_team_league_standing.loc[:,"PlayoffRank"].tolist()
-        opposing_team_win = opposing_team_league_standing.loc[:,"WINS"].tolist()
-        opposing_team_win_percentage = opposing_team_league_standing.loc[:,"WinPCT"].tolist()
-        opposing_team_road = opposing_team_league_standing.loc[:,"Last10Road"].tolist()
-        opposing_team_home = opposing_team_league_standing.loc[:,"Last10Home"].tolist()
-        
-        # Compare the ranks from regular season to see who's better
-        if int(team_rank[0]) - int(opposing_team_rank[0]) > 0:
-            better_rank = 1
-        elif int(team_rank[0]) - int(opposing_team_rank[0]) < 0:
-            better_rank = -1
-        else:
             better_rank = 0
-        
-        # Compare the number of wins from regular season to see who's better
-        if int(team_win[0]) - int(opposing_team_win[0]) > 0:
-            regular_season_win = 1
-        elif int(team_win[0]) - int(opposing_team_win[0]) < 0:
-            regular_season_win = -1
-        else:
             regular_season_win = 0
-        
-        # Compare the win percentage from regular season to see who's better
-        if int(team_win_percentage[0]) - int(opposing_team_win_percentage[0]) > 0:
-            regular_season_win_percentage = 1
-        elif int(team_win[0]) - int(opposing_team_win[0]) < 0:
-            regular_season_win_percentage = -1
-        else:
             regular_season_win_percentage = 0
-        
-        # Compare the last 10 road matches result from regular season to see who's better
-        if int(team_road[0][0]) - int(opposing_team_road[0][0]) > 0:
-            road_play = 1
-        elif int(team_road[0][0]) - int(opposing_team_road[0][0]) < 0:
-            road_play = -1
-        else:
             road_play = 0
-        
-        # Compare the ast 10 home matches result from regular season to see who's better
-        if int(team_home[0][0]) - int(opposing_team_home[0][0]) > 0:
-            home_play = 1
-        elif int(team_home[0][0]) - int(opposing_team_home[0][0]) < 0:
-            home_play = -1
-        else:
             home_play = 0
-        
-        # Put all the chosen variable of decison tree into 1 total random forest result
-        random_forest_result = overall_team_scoring + win_history + better_rank + regular_season_win + regular_season_win_percentage + road_play + home_play
-        
-        # Check the status of the random result and print out prediction
-        if random_forest_result > 0:
-            st.write(f"{search_team_info(name=team_name)[1][0]} is going to defeat {search_team_info(name=opposite_team_name)[1][0]} in the Playoff")
-        elif random_forest_result < 0:
-            st.write(f"{search_team_info(name=opposite_team_name)[1][0]} is going to defeat {search_team_info(name=team_name)[1][0]} in the Playoff")
-        else:
-            st.write("I'm not sure who's going to win in the playoff")
+
+            # Collect home team player stats and sorted it to most 15 scored players contributed to the game
+            team_player_stats = leagueplayerondetails.LeaguePlayerOnDetails(team_id=search_team_info(name=team_name)[0][0])
+            team_player_stats = team_player_stats.get_data_frames()[0]
+            team_player_stats = sqldf("select * from team_player_stats order by PTS DESC limit 15")
+            
+            # Collect opposite team player stats and sorted it to most 15 scored players contributed to the game
+            opposing_team_player_stats = leagueplayerondetails.LeaguePlayerOnDetails(team_id=search_team_info(name=opposite_team_name)[0][0])
+            opposing_team_player_stats = opposing_team_player_stats.get_data_frames()[0]
+            opposing_team_player_stats = sqldf("select * from opposing_team_player_stats order by PTS DESC limit 15")
+            
+            # Print out their results
+            st.subheader("Team Members Performance:")
+            st.write(team_player_stats)
+            
+            st.subheader("Opposite Team Members Performance:")
+            st.write(opposing_team_player_stats)
+            
+            # Print the points difference in dataframe
+            comparing_player_stats = sqldf("WITH t1_row_numbers AS (SELECT ROW_NUMBER() OVER (ORDER BY TEAM_ID) as row_num, team_id, PTS FROM team_player_stats ), t2_row_numbers AS (SELECT ROW_NUMBER() OVER (ORDER BY TEAM_ID) as row_num, team_id, PTS FROM opposing_team_player_stats) SELECT t1_row_numbers.row_num, t1_row_numbers.PTS - t2_row_numbers.PTS as PTS_difference, CASE WHEN t1_row_numbers.PTS - t2_row_numbers.PTS > 0 THEN 1 ELSE 0 END as status FROM t1_row_numbers INNER JOIN t2_row_numbers ON t1_row_numbers.row_num = t2_row_numbers.row_num")
+            
+            st.subheader("Point difference between 2 teams best scorer from top to bottom and limitted to the best 15")
+            st.write(comparing_player_stats)
+            
+            # Determine whose team has better team player scores in general
+            overall_stats_result = comparing_player_stats['status'].value_counts()[1] - comparing_player_stats['status'].value_counts()[0]
+            if overall_stats_result > 0:
+                overall_team_scoring = 1
+            elif overall_stats_result == 0 :
+                overall_team_scoring = 0
+            else:
+                overall_team_scoring = -1
+            
+            # Determine whose team has more wins in the entire history they faced each other
+            overall_win_result = games['WL'].value_counts()['W'] - games['WL'].value_counts()['L']
+            if overall_win_result > 0:
+                win_history = 1
+            elif overall_win_result == 0 :
+                win_history = 0
+            else:
+                win_history = -1
+            
+            # Extract the latest season standings and put it in dataframe
+            league_standing = leaguestandingsv3.LeagueStandingsV3(season_type = 'Regular Season', season_nullable = "2022-2023")
+            league_standing = league_standing.get_data_frames()[0]
+            
+            # Extract the necessary information such as TeamName, PlayoffRank, WINS, WinPCT, Last10Road, Last10Home from the dataframe for 2 teams 
+            team_league_standing = sqldf(f"select TeamName, PlayoffRank, WINS, WinPCT, Last10Road, Last10Home from league_standing where TeamID = {search_team_info(name=team_name)[0][0]}")
+            opposing_team_league_standing = sqldf(f"select TeamName, PlayoffRank, WINS, WinPCT, Last10Road, Last10Home from league_standing where TeamID = {search_team_info(name=opposite_team_name)[0][0]}")
+            
+            # Print the result
+            st.subheader("Team Regular Season Performance")
+            st.write(team_league_standing)
+            
+            st.subheader("Opposite Team Regular Season Performance")
+            st.write(opposing_team_league_standing)
+            
+            # Extract information from each column and put it in list data structure for home team
+            team_rank = team_league_standing.loc[:,"PlayoffRank"].tolist()
+            team_win = team_league_standing.loc[:,"WINS"].tolist()
+            team_win_percentage = team_league_standing.loc[:,"WinPCT"].tolist()
+            team_road = team_league_standing.loc[:,"Last10Road"].tolist()
+            team_home = team_league_standing.loc[:,"Last10Home"].tolist()
+            
+            # Extract information from each column and put it in list data structure for opposite team
+            opposing_team_rank = opposing_team_league_standing.loc[:,"PlayoffRank"].tolist()
+            opposing_team_win = opposing_team_league_standing.loc[:,"WINS"].tolist()
+            opposing_team_win_percentage = opposing_team_league_standing.loc[:,"WinPCT"].tolist()
+            opposing_team_road = opposing_team_league_standing.loc[:,"Last10Road"].tolist()
+            opposing_team_home = opposing_team_league_standing.loc[:,"Last10Home"].tolist()
+            
+            # Compare the ranks from regular season to see who's better
+            if int(team_rank[0]) - int(opposing_team_rank[0]) > 0:
+                better_rank = 1
+            elif int(team_rank[0]) - int(opposing_team_rank[0]) < 0:
+                better_rank = -1
+            else:
+                better_rank = 0
+            
+            # Compare the number of wins from regular season to see who's better
+            if int(team_win[0]) - int(opposing_team_win[0]) > 0:
+                regular_season_win = 1
+            elif int(team_win[0]) - int(opposing_team_win[0]) < 0:
+                regular_season_win = -1
+            else:
+                regular_season_win = 0
+            
+            # Compare the win percentage from regular season to see who's better
+            if int(team_win_percentage[0]) - int(opposing_team_win_percentage[0]) > 0:
+                regular_season_win_percentage = 1
+            elif int(team_win[0]) - int(opposing_team_win[0]) < 0:
+                regular_season_win_percentage = -1
+            else:
+                regular_season_win_percentage = 0
+            
+            # Compare the last 10 road matches result from regular season to see who's better
+            if int(team_road[0][0]) - int(opposing_team_road[0][0]) > 0:
+                road_play = 1
+            elif int(team_road[0][0]) - int(opposing_team_road[0][0]) < 0:
+                road_play = -1
+            else:
+                road_play = 0
+            
+            # Compare the ast 10 home matches result from regular season to see who's better
+            if int(team_home[0][0]) - int(opposing_team_home[0][0]) > 0:
+                home_play = 1
+            elif int(team_home[0][0]) - int(opposing_team_home[0][0]) < 0:
+                home_play = -1
+            else:
+                home_play = 0
+            
+            # Put all the chosen variable of decison tree into 1 total random forest result
+            random_forest_result = overall_team_scoring + win_history + better_rank + regular_season_win + regular_season_win_percentage + road_play + home_play
+            
+            # Check the status of the random result and print out prediction
+            st.subheader("Simulation result if they face in the Playoff")
+            if random_forest_result > 0:
+                st.write(f"{search_team_info(name=team_name)[1][0]} is going to defeat {search_team_info(name=opposite_team_name)[1][0]} in the Playoff")
+            elif random_forest_result < 0:
+                st.write(f"{search_team_info(name=opposite_team_name)[1][0]} is going to defeat {search_team_info(name=team_name)[1][0]} in the Playoff")
+            else:
+                st.write("I'm not sure who's going to win in the playoff")
             
 #Streamlit Multipage Creation
 page_names_to_funcs = {
